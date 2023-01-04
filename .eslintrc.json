@@ -1037,6 +1037,18 @@
       },
       {
         "selector": [
+          "variable"
+        ],
+        "modifiers": [
+          "const"
+        ],
+        "format": [
+          "UPPER_CASE",
+          "strictCamelCase"
+        ]
+      },
+      {
+        "selector": [
           "variable",
           "parameter",
           "property",
