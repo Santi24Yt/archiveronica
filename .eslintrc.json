@@ -1046,29 +1046,6 @@
           "UPPER_CASE",
           "strictCamelCase"
         ]
-      },
-      {
-        "selector": [
-          "variable",
-          "parameter",
-          "property",
-          "accessor"
-        ],
-        "types": [
-          "boolean"
-        ],
-        "format": [
-          "PascalCase"
-        ],
-        "prefix": [
-          "is",
-          "has",
-          "are",
-          "can",
-          "should",
-          "did",
-          "will"
-        ]
       }
     ],
     "sort-class-members/sort-class-members": [
@@ -1798,7 +1775,7 @@
     "max-statements": [
       "error",
       {
-        "max": 25
+        "max": 30
       }
     ],
     "new-cap": [
@@ -2275,9 +2252,6 @@
       "error"
     ],
     "import/no-mutable-exports": [
-      "error"
-    ],
-    "import/unambiguous": [
       "error"
     ],
     "import/no-amd": [
