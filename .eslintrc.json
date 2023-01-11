@@ -88,8 +88,11 @@
   "reportUnusedDisableDirectives": true,
   "rules": {
     "node/file-extension-in-import": [
-      "error",
-      "never"
+      "off",
+      "always",
+      {
+        "tryExtensions": [".js"]
+      }
     ],
     "node/no-callback-literal": [
       "error"
@@ -162,9 +165,6 @@
       "error"
     ],
     "node/no-exports-assign": [
-      "error"
-    ],
-    "node/no-missing-import": [
       "error"
     ],
     "node/no-missing-require": [
@@ -307,14 +307,6 @@
     "import/extensions": [
       "error",
       "never"
-    ],
-    "import/no-unused-modules": [
-      "error",
-      {
-        "missingExports": true,
-        "unusedExports": true,
-        "ignoreExports": ["src/index.ts"]
-      }
     ],
     "import/max-dependencies": [
       "error",
@@ -2293,14 +2285,6 @@
     "import/no-import-module-exports": [
       "error"
     ],
-    "import/no-unresolved": [
-      "error",
-      {
-        "commonjs": true,
-        "caseSensitiveStrict": true,
-        "caseSensitive": true
-      }
-    ],
     "import/no-cycle": [
       "error",
       {
@@ -3035,9 +3019,7 @@
     },
     "import/extensions": [
       ".ts",
-      ".tsx",
-      ".js",
-      ".jsx"
+      ".js"
     ],
     "import/external-module-folders": [
       "node_modules",

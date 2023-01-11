@@ -9,7 +9,7 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import CommandHandler from "./CommandHandler";
+import CommandHandler from "./CommandHandler.js";
 
 // eslint-disable-next-line new-cap
 const router = Router();

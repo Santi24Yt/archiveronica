@@ -1,4 +1,4 @@
-import type Command from "../Command";
+import type Command from "../Command.js";
 
 const ping: Command = {
   json: {

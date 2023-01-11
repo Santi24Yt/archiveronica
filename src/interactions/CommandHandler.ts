@@ -4,10 +4,10 @@ import type {
 } from "express";
 import type { APIApplicationCommand } from "discord-api-types/v10";
 
-import type Command from "./Command";
+import type Command from "./Command.js";
 
-import list from "./commands/list";
-import CommandInteraction from "./CommandInteraction";
+import list from "./commands/list.js";
+import CommandInteraction from "./CommandInteraction.js";
 
 class CommandHandler {
   // eslint-disable-next-line max-len

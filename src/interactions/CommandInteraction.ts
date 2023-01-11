@@ -2,7 +2,7 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import Interaction from "./Interaction";
+import Interaction from "./Interaction.js";
 
 class CommandInteraction extends Interaction {
   public constructor(req: ExpressRequest, res: ExpressResponse) {

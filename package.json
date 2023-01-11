@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "discord-api-types": "^0.37.25",
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "tweetnacl": "^1.0.3"
   }

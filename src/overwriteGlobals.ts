@@ -1,8 +1,10 @@
-/* eslint-disable import/no-unused-modules */
 import { isDeepStrictEqual } from "node:util";
 import type { APIApplicationCommand } from "discord-api-types/v10";
-import commandList from "./interactions/commands/list";
-import type Command from "./interactions/Command";
+import { config } from "dotenv";
+import commandList from "./interactions/commands/list.js";
+import type Command from "./interactions/Command.js";
+
+config();
 
 if (process.env.APP_ID === undefined || process.env.APP_ID === "") {
   throw new Error("No app id provided");
@@ -23,14 +25,14 @@ function findCommand(cmd: APIApplicationCommand): Command | undefined {
   );
 }
 
-fetch(
+await fetch(
   "https://discord.com/api/v10/" +
     `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
   {
     method: "GET",
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      Authorization: process.env.DISCORD_TOKEN,
+      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
     },
   }
 )
@@ -59,8 +61,9 @@ fetch(
     }
     return response;
   })
-  .catch(() => {
+  .catch((error: unknown) => {
     console.error("Unexpected error fetching commands");
+    console.error(error);
   });
 
 fetch(
@@ -71,7 +74,7 @@ fetch(
     body: JSON.stringify(commands),
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      Authorization: process.env.DISCORD_TOKEN,
+      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
     },
   }
 )
@@ -80,10 +83,12 @@ fetch(
       const responseText = await response.text();
       throw new Error(`${response.status} ${responseText}`);
     }
+    console.log(response.body);
     return response;
   })
-  .catch(() => {
+  .catch((error: unknown) => {
     console.error("Unexpected error uploading commands");
+    console.error(error);
   });
 
 console.log("Commands overwritten successfully");

@@ -1,5 +1,5 @@
-import type Command from "../Command";
-import ping from "./ping";
+import type Command from "../Command.js";
+import ping from "./ping.js";
 
 const commandList: Command[] = [ping];
 

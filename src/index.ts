@@ -1,6 +1,8 @@
 import express from "express";
+import { config } from "dotenv";
+import interactions from "./interactions/index.js";
 
-import interactions from "./interactions/index";
+config();
 
 const app = express();
 
