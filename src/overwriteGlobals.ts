@@ -27,7 +27,7 @@ function findCommand(cmd: APIApplicationCommand): Command | undefined {
 
 await fetch(
   "https://discord.com/api/v10/" +
-    `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
+    `applications/${process.env.APP_ID}/commands?with_localizations=true`,
   {
     method: "GET",
     headers: {
@@ -72,7 +72,7 @@ await fetch(
     try {
       const overwrite = await fetch(
         "https://discord.com/api/v10/" +
-          `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
+          `applications/${process.env.APP_ID}/commands?with_localizations=true`,
         {
           method: "PUT",
           body: JSON.stringify(commands),
