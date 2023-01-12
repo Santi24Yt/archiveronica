@@ -75,7 +75,7 @@ await fetch(
           `applications/${process.env.APP_ID}/commands?with_localizations=true`,
         {
           method: "PUT",
-          body: JSON.stringify(commands),
+          body: JSON.stringify(commands.map((cmd) => cmd.json)),
           headers: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
