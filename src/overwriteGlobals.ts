@@ -33,6 +33,7 @@ await fetch(
     headers: {
       // eslint-disable-next-line @typescript-eslint/naming-convention
       Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+      "Content-Type": "application/json",
     },
   }
 )
@@ -79,6 +80,7 @@ await fetch(
           headers: {
             // eslint-disable-next-line @typescript-eslint/naming-convention
             Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            "Content-Type": "application/json",
           },
         }
       );
