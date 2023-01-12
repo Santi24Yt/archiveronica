@@ -96,7 +96,7 @@ class Interaction {
   }
 
   private resSend(res: APIInteractionResponse): void {
-    this.res.end(res);
+    this.res.send(res);
   }
 }
 

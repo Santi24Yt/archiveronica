@@ -49,7 +49,7 @@ function handleInteraction(req: ExpressRequest, res: ExpressResponse): void {
       break;
 
     default:
-      res.end("Unexpected interaction type");
+      res.send("Unexpected interaction type");
   }
 }
 

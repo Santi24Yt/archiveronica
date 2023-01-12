@@ -49,7 +49,7 @@ class CommandHandler {
   public run(req: ExpressRequest, res: ExpressResponse): unknown {
     const command = this.findCommand(req.body as APIApplicationCommand);
     if (command === undefined) {
-      res.end({
+      res.send({
         type: 4,
         data: {
           content: "Missing command, contact devs",

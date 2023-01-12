@@ -88,6 +88,7 @@ await fetch(
         const responseText = await overwrite.text();
         throw new Error(`${overwrite.status} ${responseText}`);
       }
+      await overwrite.json();
       console.log(overwrite.body);
     } catch (error) {
       console.error("Unexpected error uploading commands");
