@@ -36,6 +36,7 @@ await fetch(
     },
   }
 )
+  // eslint-disable-next-line complexity, sonarjs/cognitive-complexity
   .then(async (response) => {
     if (!response.ok) {
       const responseText = await response.text();
@@ -59,36 +60,41 @@ await fetch(
         commands.splice(commands.indexOf(command), 1);
       }
     }
+    if (process.env.APP_ID === undefined || process.env.APP_ID === "") {
+      throw new Error("No app id provided");
+    }
+    if (
+      process.env.DISCORD_TOKEN === undefined ||
+      process.env.DISCORD_TOKEN === ""
+    ) {
+      throw new Error("No discord token provided");
+    }
+    try {
+      const overwrite = await fetch(
+        "https://discord.com/api/v10/" +
+          `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
+        {
+          method: "PUT",
+          body: JSON.stringify(commands),
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+          },
+        }
+      );
+      if (!overwrite.ok) {
+        const responseText = await overwrite.text();
+        throw new Error(`${overwrite.status} ${responseText}`);
+      }
+      console.log(overwrite.body);
+    } catch (error) {
+      console.error("Unexpected error uploading commands");
+      console.error(error);
+    }
+    console.log("Commands overwritten successfully");
     return response;
   })
   .catch((error: unknown) => {
     console.error("Unexpected error fetching commands");
     console.error(error);
   });
-
-fetch(
-  "https://discord.com/api/v10/" +
-    `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
-  {
-    method: "PUT",
-    body: JSON.stringify(commands),
-    headers: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
-    },
-  }
-)
-  .then(async (response) => {
-    if (!response.ok) {
-      const responseText = await response.text();
-      throw new Error(`${response.status} ${responseText}`);
-    }
-    console.log(response.body);
-    return response;
-  })
-  .catch((error: unknown) => {
-    console.error("Unexpected error uploading commands");
-    console.error(error);
-  });
-
-console.log("Commands overwritten successfully");
