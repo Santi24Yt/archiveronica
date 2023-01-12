@@ -37,15 +37,12 @@ function handleInteraction(req: ExpressRequest, res: ExpressResponse): void {
       break;
 
     case InteractionType.MessageComponent:
-
       break;
 
     case InteractionType.ApplicationCommandAutocomplete:
-
       break;
 
     case InteractionType.ModalSubmit:
-
       break;
 
     default:
