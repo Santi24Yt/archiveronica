@@ -77,7 +77,7 @@ class Interaction {
 
   public reply(content: string, isEphemeral = false) {
     const response: APIInteractionResponse = {
-      type: 1,
+      type: 4,
       data: {
         content,
       },
