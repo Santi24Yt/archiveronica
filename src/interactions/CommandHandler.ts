@@ -2,7 +2,7 @@ import type {
   Request as ExpressRequest,
   Response as ExpressResponse,
 } from "express";
-import type { APIApplicationCommand } from "discord-api-types/v10";
+import type { APIApplicationCommandInteraction } from "discord-api-types/v10";
 
 import type Command from "./Command.js";
 
@@ -47,7 +47,9 @@ class CommandHandler {
   }
 
   public run(req: ExpressRequest, res: ExpressResponse): unknown {
-    const command = this.findCommand(req.body as APIApplicationCommand);
+    const command = this.findCommand(
+      req.body as APIApplicationCommandInteraction
+    );
     if (command === undefined) {
       res.send({
         type: 4,
@@ -73,10 +75,13 @@ class CommandHandler {
     command.exec(ctx);
   }
 
-  public findCommand(cmd: APIApplicationCommand): Command | undefined {
+  public findCommand(
+    cmd: APIApplicationCommandInteraction
+  ): Command | undefined {
     return this.commands.find(
       (command) =>
-        command.json.name === cmd.name && command.json.type === cmd.type
+        command.json.name === cmd.data.name &&
+        command.json.type === cmd.data.type
     );
   }
 }

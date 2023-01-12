@@ -13,4 +13,8 @@ app.use(express.json());
 
 app.use("/interactions", interactions);
 
+app.get("/", (req, res) => {
+  res.send(`Online\n${req.url}`);
+});
+
 app.listen(port);
