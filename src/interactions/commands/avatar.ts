@@ -94,6 +94,7 @@ const avatar: Command = {
         user.avatar === null
           ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
           : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+      embed.setImage(avatarUrl);
     }
 
     ctx.reply({
