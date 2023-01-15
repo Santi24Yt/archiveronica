@@ -1675,7 +1675,7 @@
       "error"
     ],
     "no-negated-condition": [
-      "error"
+      "off"
     ],
     "no-nested-ternary": [
       "error"

@@ -9,24 +9,25 @@ import type {
   APIInteractionGuildMember,
   APIUser,
   APIInteractionResponse,
+  APIInteractionResponseCallbackData,
 } from "discord-api-types/v10";
 import { InteractionType } from "discord-api-types/v10";
 
 class Interaction {
-  protected raw: APIInteraction;
-  protected id: Snowflake;
-  protected applicationId: Snowflake;
-  protected type: InteractionType;
-  protected token: string;
-  protected version: number;
-  protected locale: LocaleString;
-  protected data: object;
-  protected guildId?: Snowflake;
-  protected channelId?: Snowflake;
-  protected member?: APIInteractionGuildMember;
-  protected user?: APIUser;
-  protected appPermissions?: string;
-  protected guildLocale?: LocaleString;
+  public raw: APIInteraction;
+  public id: Snowflake;
+  public applicationId: Snowflake;
+  public type: InteractionType;
+  public token: string;
+  public version: number;
+  public locale: LocaleString;
+  public data: object;
+  public guildId?: Snowflake;
+  public channelId?: Snowflake;
+  public member?: APIInteractionGuildMember;
+  public user?: APIUser;
+  public appPermissions?: string;
+  public guildLocale?: LocaleString;
 
   protected req: ExpressRequest;
   protected res: ExpressResponse;
@@ -75,7 +76,7 @@ class Interaction {
     }
   }
 
-  public reply(content: string, isEphemeral = false) {
+  public textReply(content: string, isEphemeral = false) {
     const response: APIInteractionResponse = {
       type: 4,
       data: {
@@ -90,6 +91,16 @@ class Interaction {
         flags: 1 << 6,
       };
     }
+    if (!this.replied) {
+      this.resSend(response);
+    }
+  }
+
+  public reply(data: APIInteractionResponseCallbackData) {
+    const response: APIInteractionResponse = {
+      type: 4,
+      data,
+    };
     if (!this.replied) {
       this.resSend(response);
     }

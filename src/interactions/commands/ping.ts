@@ -7,7 +7,7 @@ const ping: Command = {
     type: 1,
   },
   exec: (ctx) => {
-    ctx.reply("pong");
+    ctx.textReply("pong");
   },
 };
 
