@@ -15,7 +15,7 @@ const avatar: Command = {
         description: "No need to ping yourself",
       },
       {
-        type: 4,
+        type: 3,
         name: "id",
         description: "The id of the user, it can be any user",
       },

@@ -34,8 +34,8 @@ try {
     const responseText = await overwrite.text();
     throw new Error(`${overwrite.status} ${responseText}`);
   }
-  await overwrite.json();
-  console.log(overwrite.body);
+  const body = (await overwrite.json()) as object;
+  console.log(body);
 } catch (error) {
   console.error("Unexpected error uploading commands");
   console.error(error);
