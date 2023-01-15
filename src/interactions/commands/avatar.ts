@@ -25,14 +25,21 @@ const avatar: Command = {
   // eslint-disable-next-line sonarjs/cognitive-complexity, complexity, max-statements
   exec: async (ctx) => {
     const embed = new Embed();
-    let avatarUrl = "xd";
+    let avatarUrl =
+      "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif";
 
     if (ctx.data.options === undefined || ctx.data.options.length === 0) {
       if (ctx.member !== undefined) {
-        avatarUrl = ctx.member.avatar ?? "xd";
+        avatarUrl =
+          ctx.member.user.avatar === null
+            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
+            : `https://cdn.discordapp.com/avatars/${ctx.member.user.id}/${ctx.member.user.avatar}.png`;
         embed.setImage(avatarUrl);
       } else if (ctx.user !== undefined) {
-        avatarUrl = ctx.user.avatar ?? "xd";
+        avatarUrl =
+          ctx.user.avatar === null
+            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
+            : `https://cdn.discordapp.com/avatars/${ctx.user.id}/${ctx.user.avatar}.png`;
         embed.setImage(avatarUrl);
       } else {
         ctx.textReply("No user found");
@@ -62,7 +69,10 @@ const avatar: Command = {
     if (idOption !== undefined) {
       const user = await getUser(idOption.value as string);
       if (user !== undefined) {
-        avatarUrl = user.avatar ?? "xd";
+        avatarUrl =
+          user.avatar === null
+            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
+            : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
         embed.setImage(avatarUrl);
       } else {
         ctx.textReply("User not found");
@@ -80,7 +90,10 @@ const avatar: Command = {
         return;
       }
       const user = ctx.data.resolved.users[userId];
-      avatarUrl = user.avatar ?? "xd";
+      avatarUrl =
+        user.avatar === null
+          ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
+          : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
     }
 
     ctx.reply({
