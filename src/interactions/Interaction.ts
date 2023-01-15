@@ -109,6 +109,10 @@ class Interaction {
   private resSend(res: APIInteractionResponse): void {
     this.res.send(res);
   }
+
+  protected getData() {
+    return this.data;
+  }
 }
 
 export default Interaction;

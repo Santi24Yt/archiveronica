@@ -13,7 +13,8 @@ class CommandInteraction extends Interaction {
 
   public constructor(req: ExpressRequest, res: ExpressResponse) {
     super(req, res);
-    this.data = super.data as APIChatInputApplicationCommandInteractionData;
+    this.data =
+      super.getData() as APIChatInputApplicationCommandInteractionData;
   }
 
   public findOption(
