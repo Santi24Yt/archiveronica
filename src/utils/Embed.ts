@@ -28,10 +28,23 @@ class Embed implements APIEmbed {
     return this;
   }
 
-  public toJSON(): APIEmbed {
-    return {
-      image: this.image,
+  public setThumbnail(url: string): this {
+    this.thumbnail = {
+      url,
     };
+    return this;
+  }
+
+  public toJSON(): APIEmbed {
+    const embed: APIEmbed = {};
+    if (this.image !== undefined) {
+      embed.image = this.image;
+    }
+    if (this.thumbnail !== undefined) {
+      embed.thumbnail = this.thumbnail;
+    }
+
+    return embed;
   }
 }
 

@@ -1,7 +1,17 @@
 import type { APIApplicationCommandInteractionDataBasicOption } from "discord-api-types/v10";
 import Embed from "../../utils/Embed.js";
-import { getUser } from "../../utils/users.js";
 import type Command from "../Command.js";
+
+function getAvatarURL(id: string, hash: string, guildId?: string) {
+  if (guildId === undefined) {
+    return hash.startsWith("a_")
+      ? `https://cdn.discordapp.com/avatars/${id}/${hash}.gif?size=1024`
+      : `https://cdn.discordapp.com/avatars/${id}/${hash}.png?size=1024`;
+  }
+  return hash.startsWith("a_")
+    ? `https://cdn.discordapp.com/guilds/${guildId}/users/${id}/avatars/${hash}.gif?size=1024`
+    : `https://cdn.discordapp.com/guilds/${guildId}/users/${id}/avatars/${hash}.png?size=1024`;
+}
 
 const avatar: Command = {
   json: {
@@ -14,38 +24,50 @@ const avatar: Command = {
         name: "user",
         description: "No need to ping yourself",
       },
-      {
-        type: 3,
-        name: "id",
-        description: "The id of the user, it can be any user",
-      },
     ],
   },
   // eslint-disable-next-line max-len
   // eslint-disable-next-line sonarjs/cognitive-complexity, complexity, max-statements
-  exec: async (ctx) => {
+  exec: (ctx) => {
     const embed = new Embed();
-    let avatarUrl =
-      "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif";
 
     if (ctx.data.options === undefined || ctx.data.options.length === 0) {
-      if (ctx.member !== undefined) {
-        avatarUrl =
-          ctx.member.user.avatar === null
-            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
-            : `https://cdn.discordapp.com/avatars/${ctx.member.user.id}/${ctx.member.user.avatar}.png`;
-        embed.setImage(avatarUrl);
-      } else if (ctx.user !== undefined) {
-        avatarUrl =
-          ctx.user.avatar === null
-            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
-            : `https://cdn.discordapp.com/avatars/${ctx.user.id}/${ctx.user.avatar}.png`;
-        embed.setImage(avatarUrl);
-      } else {
-        ctx.textReply("No user found");
+      if (
+        ctx.member?.avatar !== undefined &&
+        ctx.member.avatar !== null &&
+        ctx.user?.avatar !== undefined &&
+        ctx.user.avatar !== null
+      ) {
+        const guildAvatar = getAvatarURL(
+          ctx.member.user.id,
+          ctx.member.avatar,
+          ctx.guildId
+        );
+        embed.setImage(guildAvatar);
+        const userAvatar = getAvatarURL(ctx.user.id, ctx.user.avatar);
+        embed.setThumbnail(userAvatar);
+        ctx.reply({
+          content: `\`guild\`: <${guildAvatar}>\n\`user\`: <${userAvatar}>`,
+          embeds: [embed.toJSON()],
+
+          // Add switch button
+          components: [],
+        });
         return;
       }
-
+      let avatarUrl =
+        "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif";
+      if (ctx.member?.avatar !== undefined && ctx.member.avatar !== null) {
+        avatarUrl = getAvatarURL(
+          ctx.member.user.id,
+          ctx.member.avatar,
+          ctx.guildId
+        );
+      }
+      if (ctx.user?.avatar !== undefined && ctx.user.avatar !== null) {
+        avatarUrl = getAvatarURL(ctx.user.id, ctx.user.avatar);
+      }
+      embed.setImage(avatarUrl);
       ctx.reply({
         content: `<${avatarUrl}>`,
         embeds: [embed.toJSON()],
@@ -53,54 +75,54 @@ const avatar: Command = {
       return;
     }
 
-    const idOption = ctx.findOption("id") as
-      | APIApplicationCommandInteractionDataBasicOption
-      | undefined;
-
     const userOption = ctx.findOption("user") as
       | APIApplicationCommandInteractionDataBasicOption
       | undefined;
-
-    if (idOption !== undefined && userOption !== undefined) {
-      ctx.textReply("No need to specify user and id, use only one");
-      return;
-    }
-
-    if (idOption !== undefined) {
-      const user = await getUser(idOption.value as string);
-      if (user !== undefined) {
-        avatarUrl =
-          user.avatar === null
-            ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
-            : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-        embed.setImage(avatarUrl);
-      } else {
-        ctx.textReply("User not found");
-        return;
-      }
-    }
 
     if (userOption !== undefined) {
       const userId = userOption.value as string;
       if (
         ctx.data.resolved === undefined ||
-        ctx.data.resolved.users === undefined
+        ctx.data.resolved.users === undefined ||
+        ctx.data.resolved.members === undefined
       ) {
         ctx.textReply("Unexpected error", true);
         return;
       }
       const user = ctx.data.resolved.users[userId];
-      avatarUrl =
-        user.avatar === null
-          ? "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif"
-          : `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
-      embed.setImage(avatarUrl);
-    }
+      const member = ctx.data.resolved.members[userId];
+      if (
+        member.avatar !== undefined &&
+        member.avatar !== null &&
+        user.avatar !== null
+      ) {
+        const guildAvatar = getAvatarURL(user.id, member.avatar, ctx.guildId);
+        embed.setImage(guildAvatar);
+        const userAvatar = getAvatarURL(user.id, user.avatar);
+        embed.setThumbnail(userAvatar);
+        ctx.reply({
+          content: `\`guild\`: <${guildAvatar}>\n\`user\`: <${userAvatar}>`,
+          embeds: [embed.toJSON()],
 
-    ctx.reply({
-      content: `<${avatarUrl}>`,
-      embeds: [embed.toJSON()],
-    });
+          // Add switch button
+          components: [],
+        });
+        return;
+      }
+      let avatarUrl =
+        "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif";
+      if (member.avatar !== undefined && member.avatar !== null) {
+        avatarUrl = getAvatarURL(user.id, member.avatar, ctx.guildId);
+      }
+      if (user.avatar !== null) {
+        avatarUrl = getAvatarURL(user.id, user.avatar);
+      }
+      embed.setImage(avatarUrl);
+      ctx.reply({
+        content: `<${avatarUrl}>`,
+        embeds: [embed.toJSON()],
+      });
+    }
   },
 };
 

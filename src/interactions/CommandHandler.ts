@@ -10,36 +10,6 @@ import list from "./commands/list.js";
 import CommandInteraction from "./CommandInteraction.js";
 
 class CommandHandler {
-  // eslint-disable-next-line max-len
-  // public static async fetchGlobalCommands(): Promise<APIApplicationCommand[]> {
-  // if (process.env.APP_ID === undefined || process.env.APP_ID === "") {
-  //     throw new Error("No app id provided");
-  // }
-  // if (
-  //     process.env.DISCORD_TOKEN === undefined ||
-  //     process.env.DISCORD_TOKEN === ""
-  // ) {
-  //     throw new Error("No discord token provided");
-  // }
-  // const response = await fetch(
-  //     "https://discord.com/api/v10/" +
-  // eslint-disable-next-line max-len
-  //       `/applications/${process.env.APP_ID}/commands?with_localizations=true`,
-  //     {
-  //       method: "GET",
-  //       headers: {
-  //         // eslint-disable-next-line @typescript-eslint/naming-convention
-  //         Authorization: process.env.DISCORD_TOKEN,
-  //       },
-  //     }
-  // );
-  // if (!response.ok) {
-  //     const responseText = await response.text();
-  //     throw new Error(`${response.status} ${responseText}`);
-  // }
-  // return (await response.json()) as APIApplicationCommand[];
-  // }
-
   private readonly commands: Command[];
 
   public constructor() {
