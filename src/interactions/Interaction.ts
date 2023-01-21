@@ -104,12 +104,45 @@ class Interaction {
     }
   }
 
-  private resSend(res: APIInteractionResponse): void {
-    this.res.send(res);
+  public defer() {
+    if (this.replied) {
+      throw new Error("Replied interactions cannot be deferred");
+    }
+    this.resSend({
+      type: 5,
+    });
   }
 
+  private resSend(res: APIInteractionResponse): void {
+    this.res.send(res);
+    this.replied = true;
+  }
   protected getData() {
     return this.data;
+  }
+  public async editTextDeferred(content: string) {
+    if (
+      process.env.DISCORD_TOKEN === undefined ||
+      process.env.DISCORD_TOKEN === ""
+    ) {
+      throw new Error("No discord token provided");
+    }
+
+    await fetch(
+      "https://discord.com/api/v10/" +
+        `webhooks/${this.applicationId}/${this.token}/messages/@original`,
+      {
+        method: "PATCH",
+        body: JSON.stringify({
+          content,
+        }),
+        headers: {
+          // eslint-disable-next-line @typescript-eslint/naming-convention
+          Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
   }
 }
 

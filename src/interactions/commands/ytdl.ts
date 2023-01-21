@@ -100,14 +100,16 @@ const ytdl: Command = {
       "url"
     ) as APIApplicationCommandInteractionDataBasicOption;
 
+    ctx.defer();
+
     try {
       const metadata: VideoInfo = (await ytdlp.getVideoInfo(
         urlOption.value as string
       )) as VideoInfo;
 
-      ctx.textReply(metadata.title);
+      await ctx.editTextDeferred(metadata.title);
     } catch {
-      ctx.textReply("Invalid url");
+      await ctx.editTextDeferred("Invalid url");
     }
   },
 };

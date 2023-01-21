@@ -6,3 +6,4 @@ logs/
 .vscode/
 .npmrc
 dist/
+replit.nix
