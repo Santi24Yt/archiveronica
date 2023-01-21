@@ -83,16 +83,15 @@ const avatar: Command = {
       const userId = userOption.value as string;
       if (
         ctx.data.resolved === undefined ||
-        ctx.data.resolved.users === undefined ||
-        ctx.data.resolved.members === undefined
+        ctx.data.resolved.users === undefined
       ) {
         ctx.textReply("Unexpected error", true);
         return;
       }
       const user = ctx.data.resolved.users[userId];
-      const member = ctx.data.resolved.members[userId];
+      const member = ctx.data.resolved.members?.[userId];
       if (
-        member.avatar !== undefined &&
+        member?.avatar !== undefined &&
         member.avatar !== null &&
         user.avatar !== null
       ) {
@@ -111,7 +110,7 @@ const avatar: Command = {
       }
       let avatarUrl =
         "https://cdn.discordapp.com/attachments/510634721974419459/1064040437532348476/noavatar.gif";
-      if (member.avatar !== undefined && member.avatar !== null) {
+      if (member?.avatar !== undefined && member.avatar !== null) {
         avatarUrl = getAvatarURL(user.id, member.avatar, ctx.guildId);
       }
       if (user.avatar !== null) {
