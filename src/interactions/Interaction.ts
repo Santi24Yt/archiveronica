@@ -65,9 +65,7 @@ class Interaction {
     if (raw.member !== undefined) {
       this.member = raw.member;
     }
-    if (raw.user !== undefined) {
-      this.user = raw.user;
-    }
+    this.user = raw.user ?? this.member?.user;
     if (raw.app_permissions !== undefined) {
       this.appPermissions = raw.app_permissions;
     }
