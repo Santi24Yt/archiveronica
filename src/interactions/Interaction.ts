@@ -12,6 +12,8 @@ import type {
   APIInteractionResponseCallbackData,
 } from "discord-api-types/v10";
 import { InteractionType } from "discord-api-types/v10";
+import FFormData from "form-data";
+import type DiscordFile from "../utils/DiscordFile.js";
 
 class Interaction {
   public raw: APIInteraction;
@@ -94,13 +96,16 @@ class Interaction {
     }
   }
 
-  public reply(data: APIInteractionResponseCallbackData) {
+  public reply(
+    data: APIInteractionResponseCallbackData,
+    files?: DiscordFile[]
+  ) {
     const response: APIInteractionResponse = {
       type: 4,
       data,
     };
     if (!this.replied) {
-      this.resSend(response);
+      this.resSend(response, files);
     }
   }
 
@@ -113,13 +118,28 @@ class Interaction {
     });
   }
 
-  private resSend(res: APIInteractionResponse): void {
-    this.res.send(res);
-    this.replied = true;
+  private resSend(res: APIInteractionResponse, files?: DiscordFile[]): void {
+    const formData = new FFormData();
+    if (files !== undefined && files.length > 0) {
+      files.forEach((file, key) => {
+        formData.append(`files[${key}]`, file.value, file.filename);
+      });
+      formData.append("payload_json", JSON.stringify(res), {
+        contentType: "application/json",
+      });
+      const headers = formData.getHeaders();
+      this.res.header(headers).send(formData.getBuffer());
+      this.replied = true;
+    } else {
+      this.res.send(res);
+      this.replied = true;
+    }
   }
+
   protected getData() {
     return this.data;
   }
+
   public async editTextDeferred(content: string) {
     if (
       process.env.DISCORD_TOKEN === undefined ||
@@ -143,6 +163,58 @@ class Interaction {
         },
       }
     );
+  }
+
+  public async editDeferred(
+    data: APIInteractionResponseCallbackData,
+    files?: DiscordFile[]
+  ) {
+    if (
+      process.env.DISCORD_TOKEN === undefined ||
+      process.env.DISCORD_TOKEN === ""
+    ) {
+      throw new Error("No discord token provided");
+    }
+
+    const formData = new FFormData();
+    if (files !== undefined && files.length > 0) {
+      files.forEach((file, key) => {
+        formData.append(`files[${key}]`, file.value, file.filename);
+      });
+      formData.append("payload_json", JSON.stringify(data));
+      const headers = formData.getHeaders();
+      const response = await fetch(
+        "https://discord.com/api/v10/" +
+          `webhooks/${this.applicationId}/${this.token}/messages/@original`,
+        {
+          method: "PATCH",
+          body: formData.getBuffer(),
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            ...headers,
+          },
+        }
+      );
+      if (!response.ok) {
+        const responseText = await response.text();
+        console.log(`${response.status} ${responseText}`);
+      }
+    } else {
+      await fetch(
+        "https://discord.com/api/v10/" +
+          `webhooks/${this.applicationId}/${this.token}/messages/@original`,
+        {
+          method: "PATCH",
+          body: JSON.stringify(data),
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            Authorization: `Bot ${process.env.DISCORD_TOKEN}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
   }
 }
 

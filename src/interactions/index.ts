@@ -1,3 +1,8 @@
+/* eslint-disable import/first */
+import { config } from "dotenv";
+
+config();
+
 import { json, Router } from "express";
 import nacl from "tweetnacl";
 import {

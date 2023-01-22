@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type { APIApplicationCommandInteractionDataBasicOption } from "discord-api-types/v10";
+
 import YTDlpWrap from "yt-dlp-wrap";
 import type Command from "../Command.js";
 
@@ -107,7 +108,25 @@ const ytdl: Command = {
         urlOption.value as string
       )) as VideoInfo;
 
-      await ctx.editTextDeferred(metadata.title);
+      const vid = await ytdlp.execPromise([
+        "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+        "-f",
+        "best[ext=mp4]",
+        "--max-filesize",
+        "8M",
+      ]);
+
+      await ctx.editDeferred(
+        {
+          content: metadata.title,
+        },
+        [
+          {
+            filename: "video.mp4",
+            value: Buffer.from(vid),
+          },
+        ]
+      );
     } catch {
       await ctx.editTextDeferred("Invalid url");
     }
