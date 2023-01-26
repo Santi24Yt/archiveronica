@@ -114,13 +114,21 @@ const ytdl: Command = {
         "--no-playlist",
         "--quiet",
         "-f",
+        "best*[vcodec!=none][acodec!=none][ext~='mp4|gif|webm|mov']/bestvideo+bestaudio",
+        "--format-sort-force",
+        "-S",
       ];
 
-      if (audioOption !== undefined && (audioOption.value as boolean)) {
-        ytdlpOptions.push("worstaudio");
-      } else {
-        ytdlpOptions.push("worst[ext=mp4]");
-      }
+      let sortParameters = "hasaud,";
+
+      sortParameters +=
+        audioOption !== undefined && (audioOption.value as boolean)
+          ? "+hasvid,"
+          : "hasvid,";
+
+      sortParameters += "+size,+filesize,+fs_approx,+res,+br";
+
+      ytdlpOptions.push(sortParameters);
 
       const ytdlProcess = spawn("yt-dlp", ytdlpOptions);
 
