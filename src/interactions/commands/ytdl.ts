@@ -129,6 +129,7 @@ const ytdl: Command = {
       sortParameters += "+size,+filesize,+fs_approx,+res,+br";
 
       ytdlpOptions.push(sortParameters);
+      ytdlpOptions.push("--downloader-args '-f mp4 -movflags frag_keyframe+empty_moov'");
 
       const ytdlProcess = spawn("yt-dlp", ytdlpOptions);
 
