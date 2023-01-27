@@ -198,7 +198,11 @@ class Interaction {
       );
       if (!response.ok) {
         const responseText = await response.text();
-        console.log(`${response.status} ${responseText}`);
+        console.log(
+          `${response.status} ${JSON.stringify(
+            response.headers
+          )} ${responseText}`
+        );
       }
     } else {
       await fetch(
