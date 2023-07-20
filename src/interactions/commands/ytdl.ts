@@ -113,8 +113,9 @@ const ytdl: Command = {
         "--no-part",
         "--no-playlist",
         "--quiet",
+				"--no-warnings",
         "-f",
-        "best*[vcodec!=none][acodec!=none][ext~='mp4|gif|webm|mov']/bestvideo+bestaudio",
+        "'best*[vcodec!=none][acodec!=none][ext~=\"mp4|gif|webm|mov\"]/bestvideo+bestaudio'",
         "--format-sort-force",
         "-S",
       ];
@@ -136,10 +137,13 @@ const ytdl: Command = {
 
       const ytdlProcess = spawn("yt-dlp", ytdlpOptions);
 
+			console.log("yt-dlp "+ytdlpOptions.join(" "));
+
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       ytdlProcess.on("error", async (error: unknown) => {
         const errorMessage =
           typeof error === "string" ? error : (error as Error).message;
+				if(errorMessage === "") return;
         await (errorMessage.includes(
           'is not a valid URL. Set --default-search "ytsearch" (or run  yt-dlp "ytsearch'
         )
@@ -150,6 +154,8 @@ const ytdl: Command = {
               `Unknown error ocurred, contact devs\nError: ${errorMessage}`
             ));
         console.error(error);
+				stream.destroy();
+        ytdlProcess.kill();
       });
 
       const stream = new PassThrough();
@@ -163,8 +169,8 @@ const ytdl: Command = {
       let file = Buffer.from("");
       let fileSizeOnBytes = 0;
 
-      // 8 * 1024 * 1024 (8Mb)
-      const MAX_FILE_SIZE = 8_388_608;
+      // 25 * 1024 * 1024 (8Mb)
+      const MAX_FILE_SIZE = 26_214_400;
 
       stream.on("error", (error) => {
         ytdlProcess.emit("error", error);
@@ -181,7 +187,7 @@ const ytdl: Command = {
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       stream.on("end", async () => {
-        if (file.toString() === "" && stderrData !== "") {
+        if (file.toString() === "" || stderrData !== "") {
           ytdlProcess.emit("error", stderrData);
           return;
         }
