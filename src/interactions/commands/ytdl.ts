@@ -107,15 +107,14 @@ const ytdl: Command = {
 
     try {
       const ytdlpOptions = [
-        urlOption.value as string,
         "-o",
         "-",
         "--no-part",
         "--no-playlist",
         "--quiet",
-				"--no-warnings",
+        "--no-warnings",
         "-f",
-        "'best*[vcodec!=none][acodec!=none][ext~=\"mp4|gif|webm|mov\"]/bestvideo+bestaudio'",
+        "best*[vcodec!=none][acodec!=none][ext~='mp4|gif|webm|mov'] / bestvideo+bestaudio",
         "--format-sort-force",
         "-S",
       ];
@@ -132,18 +131,20 @@ const ytdl: Command = {
       ytdlpOptions.push(
         sortParameters,
         "--downloader-args",
-        "'-f mp4 -movflags frag_keyframe+empty_moov'"
+        "-f mp4 -movflags frag_keyframe+empty_moov",
+        "--",
+        urlOption.value as string
       );
 
       const ytdlProcess = spawn("yt-dlp", ytdlpOptions);
-
-			console.log("yt-dlp "+ytdlpOptions.join(" "));
 
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       ytdlProcess.on("error", async (error: unknown) => {
         const errorMessage =
           typeof error === "string" ? error : (error as Error).message;
-				if(errorMessage === "") return;
+        if (errorMessage === "") {
+          return;
+        }
         await (errorMessage.includes(
           'is not a valid URL. Set --default-search "ytsearch" (or run  yt-dlp "ytsearch'
         )
@@ -154,7 +155,8 @@ const ytdl: Command = {
               `Unknown error ocurred, contact devs\nError: ${errorMessage}`
             ));
         console.error(error);
-				stream.destroy();
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        stream.destroy();
         ytdlProcess.kill();
       });
 

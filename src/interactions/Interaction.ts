@@ -61,8 +61,8 @@ class Interaction {
     if (raw.guild_id !== undefined) {
       this.guildId = raw.guild_id;
     }
-    if (raw.channel_id !== undefined) {
-      this.channelId = raw.channel_id;
+    if (raw.channel?.id !== undefined) {
+      this.channelId = raw.channel.id;
     }
     if (raw.member !== undefined) {
       this.member = raw.member;
