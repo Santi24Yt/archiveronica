@@ -1,8 +1,7 @@
 import type { APIApplicationCommandInteractionDataBasicOption } from "discord-api-types/v10";
-import Embed from "../../utils/Embed.js";
 import type Command from "../Command.js";
 
-function getAvatarURL(id: string, hash: string, guildId?: string) {
+function getAvatarURL(id: string, hash: string, guildId?: string): string {
   if (guildId === undefined) {
     return hash.startsWith("a_")
       ? `https://cdn.discordapp.com/avatars/${id}/${hash}.gif?size=1024`
@@ -11,6 +10,24 @@ function getAvatarURL(id: string, hash: string, guildId?: string) {
   return hash.startsWith("a_")
     ? `https://cdn.discordapp.com/guilds/${guildId}/users/${id}/avatars/${hash}.gif?size=1024`
     : `https://cdn.discordapp.com/guilds/${guildId}/users/${id}/avatars/${hash}.png?size=1024`;
+}
+
+function getText(
+  userAvatar: string,
+  guildAvatar?: string,
+  focus?: string
+): string {
+  let text = "";
+  if (guildAvatar === undefined) {
+    text = `* [User Avatar](${userAvatar})`;
+  } else if (focus === "user") {
+    const smallGuildAvatar = guildAvatar.replace("size=1024", "size=128");
+    text += `* [Guild Avatar](${smallGuildAvatar})\n* [User Avatar](${userAvatar})`;
+  } else {
+    const smallUserAvatar = userAvatar.replace("size=1024", "size=128");
+    text += `* [User Avatar](${smallUserAvatar})\n* [Guild Avatar](${guildAvatar})`;
+  }
+  return text;
 }
 
 const avatar: Command = {
@@ -24,14 +41,37 @@ const avatar: Command = {
         name: "user",
         description: "No need to ping yourself",
       },
+      {
+        type: 3,
+        name: "focus",
+        description: "Make the focused avatar bigger",
+        choices: [
+          {
+            name: "User avatar (global)",
+            value: "user",
+          },
+          {
+            name: "Guild avatar (this server)",
+            value: "guild",
+          },
+        ],
+      },
     ],
   },
   // eslint-disable-next-line max-len
   // eslint-disable-next-line sonarjs/cognitive-complexity, complexity, max-statements
   exec: (ctx) => {
-    const embed = new Embed();
+    const focus =
+      ((
+        ctx.findOption("focus") as
+          | APIApplicationCommandInteractionDataBasicOption
+          | undefined
+      )?.value as string | undefined) ?? "guild";
 
-    if (ctx.data.options === undefined || ctx.data.options.length === 0) {
+    if (
+      ctx.data.options === undefined ||
+      ctx.findOption("user") === undefined
+    ) {
       if (
         ctx.member?.avatar !== undefined &&
         ctx.member.avatar !== null &&
@@ -43,15 +83,9 @@ const avatar: Command = {
           ctx.member.avatar,
           ctx.guildId
         );
-        embed.setImage(guildAvatar);
         const userAvatar = getAvatarURL(ctx.user.id, ctx.user.avatar);
-        embed.setThumbnail(userAvatar);
         ctx.reply({
-          content: `\`guild\`: <${guildAvatar}>\n\`user\`: <${userAvatar}>`,
-          embeds: [embed.toJSON()],
-
-          // Add switch button
-          components: [],
+          content: getText(userAvatar, guildAvatar, focus),
         });
         return;
       }
@@ -67,10 +101,8 @@ const avatar: Command = {
       if (ctx.user?.avatar !== undefined && ctx.user.avatar !== null) {
         avatarUrl = getAvatarURL(ctx.user.id, ctx.user.avatar);
       }
-      embed.setImage(avatarUrl);
       ctx.reply({
-        content: `<${avatarUrl}>`,
-        embeds: [embed.toJSON()],
+        content: getText(avatarUrl, undefined, focus),
       });
       return;
     }
@@ -96,15 +128,9 @@ const avatar: Command = {
         user.avatar !== null
       ) {
         const guildAvatar = getAvatarURL(user.id, member.avatar, ctx.guildId);
-        embed.setImage(guildAvatar);
         const userAvatar = getAvatarURL(user.id, user.avatar);
-        embed.setThumbnail(userAvatar);
         ctx.reply({
-          content: `\`guild\`: <${guildAvatar}>\n\`user\`: <${userAvatar}>`,
-          embeds: [embed.toJSON()],
-
-          // Add switch button
-          components: [],
+          content: getText(userAvatar, guildAvatar, focus),
         });
         return;
       }
@@ -116,10 +142,8 @@ const avatar: Command = {
       if (user.avatar !== null) {
         avatarUrl = getAvatarURL(user.id, user.avatar);
       }
-      embed.setImage(avatarUrl);
       ctx.reply({
-        content: `<${avatarUrl}>`,
-        embeds: [embed.toJSON()],
+        content: getText(avatarUrl, undefined, focus),
       });
     }
   },

@@ -1762,7 +1762,10 @@
       "error"
     ],
     "max-params": [
-      "error"
+      "error",
+      {
+        "max": 5
+      }
     ],
     "max-statements": [
       "error",
